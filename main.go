@@ -63,29 +63,3 @@ func (d *Dictionary[T]) Range(f func(key string, val T)) {
 		f(pair.Key, pair.Value)
 	}
 }
-
-type Enumerator[T any] struct {
-	dic   *Dictionary[T]
-	count int
-	Key   string
-	Value T
-}
-
-func (d *Dictionary[T]) Enumerator() *Enumerator[T] {
-	d.makeOrder()
-	return &Enumerator[T]{
-		dic: d,
-	}
-}
-
-func (e *Enumerator[T]) Next() bool {
-	if e.count >= len(e.dic.order) {
-		return false
-	}
-	lowerKey := e.dic.order[e.count]
-	pair := e.dic.maps[lowerKey]
-	e.Key = pair.Key
-	e.Value = pair.Value
-	e.count++
-	return true
-}

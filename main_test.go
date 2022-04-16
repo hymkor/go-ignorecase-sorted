@@ -40,21 +40,4 @@ func Test1(t *testing.T) {
 		}
 		i++
 	})
-
-	i = 0
-	for e := dic.Enumerator() ; e.Next() ; {
-		var result bool
-		switch i {
-		case 0:
-			result = (e.Key == "A" && e.Value == 1)
-		case 1:
-			result = (e.Key == "B" && e.Value == 2)
-		case 2:
-			result = (e.Key == "C" && e.Value == 3)
-		}
-		if !result {
-			t.Fatalf("Range fails at %d (%s and %d)", i, e.Key, e.Value)
-		}
-		i++
-	}
 }
