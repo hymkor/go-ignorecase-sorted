@@ -15,6 +15,10 @@ type Dictionary[T any] struct {
 	order []string
 }
 
+func (d *Dictionary[T]) Len() int {
+	return len(d.maps)
+}
+
 func (d *Dictionary[T]) Store(key string, val T) {
 	lowerKey := strings.ToLower(key)
 	if d.maps == nil {
