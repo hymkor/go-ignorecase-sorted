@@ -25,7 +25,7 @@ func Test1(t *testing.T) {
 	dic.Store("C", 3)
 
 	i := 0
-	dic.Range(func(key string, val int) {
+	dic.Range(func(key string, val int) bool {
 		var result bool
 		switch i {
 		case 0:
@@ -37,7 +37,9 @@ func Test1(t *testing.T) {
 		}
 		if !result {
 			t.Fatalf("Range fails at %d (%s and %d)", i, key, val)
+			return false
 		}
 		i++
+		return true
 	})
 }

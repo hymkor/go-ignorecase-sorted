@@ -71,10 +71,12 @@ func (d *Dictionary[T]) Keys() []string {
 	return d.order
 }
 
-func (d *Dictionary[T]) Range(f func(key string, val T)) {
+func (d *Dictionary[T]) Range(f func(key string, val T) bool) {
 	d.makeOrder()
 	for _, key := range d.order {
 		pair := d.maps[strings.ToLower(key)]
-		f(pair.Key, pair.Value)
+		if !f(pair.Key, pair.Value) {
+			break
+		}
 	}
 }
