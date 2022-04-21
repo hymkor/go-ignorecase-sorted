@@ -21,7 +21,9 @@ func (d *Dictionary[T]) Store(key string, val T) {
 		d.maps = make(map[string]KeyValue[T])
 	}
 	d.maps[lowerKey] = KeyValue[T]{Key: key, Value: val}
-	d.order = nil
+	if d.order != nil && len(d.order) > 0 {
+		d.order = d.order[:0]
+	}
 }
 
 func (d *Dictionary[T]) Delete(key string) {
@@ -30,7 +32,9 @@ func (d *Dictionary[T]) Delete(key string) {
 	}
 	lowerKey := strings.ToLower(key)
 	delete(d.maps, lowerKey)
-	d.order = nil
+	if d.order != nil && len(d.order) > 0 {
+		d.order = d.order[:0]
+	}
 }
 
 func (d *Dictionary[T]) Load(key string) (val T, ok bool) {
@@ -49,11 +53,13 @@ func (d *Dictionary[T]) Load(key string) (val T, ok bool) {
 func (d *Dictionary[t]) makeOrder() {
 	if d.order == nil {
 		d.order = make([]string, 0, len(d.maps))
-		for key := range d.maps {
-			d.order = append(d.order, key)
-		}
-		sort.Strings(d.order)
+	} else if len(d.order) > 0 {
+		return
 	}
+	for key := range d.maps {
+		d.order = append(d.order, key)
+	}
+	sort.Strings(d.order)
 }
 
 func (d *Dictionary[T]) Range(f func(key string, val T)) {
