@@ -25,21 +25,20 @@ func Test1(t *testing.T) {
 	dic.Store("C", 3)
 
 	i := 0
-	dic.Range(func(key string, val int) bool {
+	for p := dic.Each(); p.Range(); {
 		var result bool
 		switch i {
 		case 0:
-			result = (key == "A" && val == 1)
+			result = (p.Key == "A" && p.Value == 1)
 		case 1:
-			result = (key == "B" && val == 2)
+			result = (p.Key == "B" && p.Value == 2)
 		case 2:
-			result = (key == "C" && val == 3)
+			result = (p.Key == "C" && p.Value == 3)
 		}
 		if !result {
-			t.Fatalf("Range fails at %d (%s and %d)", i, key, val)
-			return false
+			t.Fatalf("Range fails at %d (%s and %d)", i, p.Key, p.Value)
+			break
 		}
 		i++
-		return true
-	})
+	}
 }

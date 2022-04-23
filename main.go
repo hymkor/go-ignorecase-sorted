@@ -71,12 +71,36 @@ func (d *Dictionary[T]) Keys() []string {
 	return d.order
 }
 
-func (d *Dictionary[T]) Range(f func(key string, val T) bool) {
+type Enumerator[T any] struct {
+	maps  map[string]KeyValue[T]
+	order []string
+	Key   string
+	Value T
+}
+
+func (d *Dictionary[T]) Each() *Enumerator[T] {
 	d.makeOrder()
-	for _, key := range d.order {
-		pair := d.maps[strings.ToLower(key)]
-		if !f(pair.Key, pair.Value) {
-			break
-		}
+	return &Enumerator[T]{
+		maps:  d.maps,
+		order: d.order,
 	}
+}
+
+func (e *Enumerator[T]) Range() bool {
+	if len(e.order) <= 0 {
+		return false
+	}
+	p := e.maps[e.order[0]]
+	e.order = e.order[1:]
+	e.Key = p.Key
+	e.Value = p.Value
+	return true
+}
+
+func New[T any](source map[string]T) *Dictionary[T] {
+	var d Dictionary[T]
+	for key, val := range source {
+		d.Store(key, val)
+	}
+	return &d
 }
