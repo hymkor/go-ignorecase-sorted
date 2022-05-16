@@ -3,7 +3,7 @@ package ignoreCaseSorted_test
 import (
 	"testing"
 
-	"github.com/nyaosorg/nyagos/internal/go-ignorecase-sorted"
+	"github.com/hymkor/go-ignorecase-sorted"
 )
 
 func TestAscend(t *testing.T) {
