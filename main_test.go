@@ -3,42 +3,61 @@ package ignoreCaseSorted_test
 import (
 	"testing"
 
-	"github.com/hymkor/go-ignorecase-sorted"
+	"github.com/nyaosorg/nyagos/internal/go-ignorecase-sorted"
 )
 
-func Test1(t *testing.T) {
+func TestAscend(t *testing.T) {
 	var dic ignoreCaseSorted.Dictionary[int]
 
-	dic.Store("A", 1)
-	dic.Store("B", 2)
-	dic.Store("c", 3)
+	dic.Set("x", 7)
+	dic.Set("y", 8)
+	dic.Set("Z", 9)
 
-	if val, ok := dic.Load("A"); !ok || val != 1 {
-		t.Fatalf("expect Load('A')==1 but %d", val)
-		return
+	expect := []struct {
+		key   string
+		value int
+	}{
+		{key: "x", value: 7},
+		{key: "y", value: 8},
+		{key: "Z", value: 9},
 	}
-	dic.Delete("C")
-	if val, ok := dic.Load("b"); !ok || val != 2 {
-		t.Fatalf("Load('b')==2 but %d", val)
-		return
+	for p := dic.Front(); p != nil; p = p.Next() {
+		if expect[0].key != p.Key {
+			t.Fatalf("'%s' != '%s'", expect[0].key, p.Key)
+			return
+		}
+		if expect[0].value != p.Value {
+			t.Fatalf("'%d' != '%d'", expect[0].value, p.Value)
+			return
+		}
+		expect = expect[1:]
 	}
-	dic.Store("C", 3)
+}
 
-	i := 0
-	for p := dic.Each(); p.Range(); {
-		var result bool
-		switch i {
-		case 0:
-			result = (p.Key == "A" && p.Value == 1)
-		case 1:
-			result = (p.Key == "B" && p.Value == 2)
-		case 2:
-			result = (p.Key == "C" && p.Value == 3)
+func TestDesend(t *testing.T) {
+	var dic ignoreCaseSorted.Dictionary[int]
+
+	dic.Set("x", 7)
+	dic.Set("y", 8)
+	dic.Set("Z", 9)
+
+	expect := []struct {
+		key   string
+		value int
+	}{
+		{key: "Z", value: 9},
+		{key: "y", value: 8},
+		{key: "x", value: 7},
+	}
+	for p := dic.Back(); p != nil; p = p.Prev() {
+		if expect[0].key != p.Key {
+			t.Fatalf("'%s' != '%s'", expect[0].key, p.Key)
+			return
 		}
-		if !result {
-			t.Fatalf("Range fails at %d (%s and %d)", i, p.Key, p.Value)
-			break
+		if expect[0].value != p.Value {
+			t.Fatalf("'%d' != '%d'", expect[0].value, p.Value)
+			return
 		}
-		i++
+		expect = expect[1:]
 	}
 }

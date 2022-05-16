@@ -5,13 +5,13 @@ import (
 	"strings"
 )
 
-type KeyValue[T any] struct {
+type _Pair[T any] struct {
 	Key   string
 	Value T
 }
 
 type Dictionary[T any] struct {
-	maps  map[string]KeyValue[T]
+	maps  map[string]_Pair[T]
 	order []string
 }
 
@@ -19,15 +19,23 @@ func (d *Dictionary[T]) Len() int {
 	return len(d.maps)
 }
 
+// Store is same as Set that is a compatible method with "sync".Map
 func (d *Dictionary[T]) Store(key string, val T) {
+	d.Set(key, val)
+}
+
+func (d *Dictionary[T]) Set(key string, val T) {
 	lowerKey := strings.ToLower(key)
 	if d.maps == nil {
-		d.maps = make(map[string]KeyValue[T])
+		d.maps = make(map[string]_Pair[T])
 	}
-	d.maps[lowerKey] = KeyValue[T]{Key: key, Value: val}
-	if d.order != nil && len(d.order) > 0 {
-		d.order = d.order[:0]
+	if _, ok := d.maps[lowerKey]; !ok {
+		at := sort.Search(len(d.order), func(i int) bool { return d.order[i] >= lowerKey })
+		d.order = append(d.order, "")
+		copy(d.order[at+1:], d.order[at:])
+		d.order[at] = lowerKey
 	}
+	d.maps[lowerKey] = _Pair[T]{Key: key, Value: val}
 }
 
 func (d *Dictionary[T]) Delete(key string) {
@@ -37,16 +45,25 @@ func (d *Dictionary[T]) Delete(key string) {
 	lowerKey := strings.ToLower(key)
 	delete(d.maps, lowerKey)
 	if d.order != nil && len(d.order) > 0 {
-		d.order = d.order[:0]
+		at := sort.Search(len(d.order), func(i int) bool { return d.order[i] >= lowerKey })
+		if at < len(d.order) && d.order[at] == lowerKey {
+			copy(d.order[at:], d.order[at+1:])
+			d.order = d.order[:len(d.order)-1]
+		}
 	}
 }
 
+// Load is same as Get that is a compatible method with "sync".Map
 func (d *Dictionary[T]) Load(key string) (val T, ok bool) {
+	return d.Get(key)
+}
+
+func (d *Dictionary[T]) Get(key string) (val T, ok bool) {
 	if d.maps == nil {
 		return
 	}
 	lowerKey := strings.ToLower(key)
-	var v KeyValue[T]
+	var v _Pair[T]
 	v, ok = d.maps[lowerKey]
 	if ok {
 		val = v.Value
@@ -54,53 +71,77 @@ func (d *Dictionary[T]) Load(key string) (val T, ok bool) {
 	return
 }
 
-func (d *Dictionary[t]) makeOrder() {
-	if d.order == nil {
-		d.order = make([]string, 0, len(d.maps))
-	} else if len(d.order) > 0 {
-		return
+func (d *Dictionary[T]) Range(f func(string, T) bool) {
+	for _, lowerKey := range d.order {
+		p := d.maps[lowerKey]
+		if !f(p.Key, p.Value) {
+			break
+		}
 	}
-	for key := range d.maps {
-		d.order = append(d.order, key)
-	}
-	sort.Strings(d.order)
 }
 
-func (d *Dictionary[T]) Keys() []string {
-	d.makeOrder()
-	return d.order
+func MapToDictionary[T any](source map[string]T) *Dictionary[T] {
+	var d Dictionary[T]
+	for key, val := range source {
+		d.Set(key, val)
+	}
+	return &d
 }
 
-type Enumerator[T any] struct {
-	maps  map[string]KeyValue[T]
-	order []string
+type Iterator[T any] struct {
+	dic   *Dictionary[T]
+	index int
 	Key   string
 	Value T
 }
 
-func (d *Dictionary[T]) Each() *Enumerator[T] {
-	d.makeOrder()
-	return &Enumerator[T]{
-		maps:  d.maps,
-		order: d.order,
+func (d *Dictionary[T]) Front() *Iterator[T] {
+	if d.maps == nil || len(d.maps) <= 0 {
+		return nil
+	}
+	p := d.maps[d.order[0]]
+	return &Iterator[T]{
+		dic:   d,
+		index: 0,
+		Key:   p.Key,
+		Value: p.Value,
 	}
 }
 
-func (e *Enumerator[T]) Range() bool {
-	if len(e.order) <= 0 {
-		return false
+func (iter *Iterator[T]) Next() *Iterator[T] {
+	iter.index++
+	dic := iter.dic
+	if iter.index >= len(dic.order) {
+		return nil
 	}
-	p := e.maps[e.order[0]]
-	e.order = e.order[1:]
-	e.Key = p.Key
-	e.Value = p.Value
-	return true
+	p := dic.maps[dic.order[iter.index]]
+	iter.Key = p.Key
+	iter.Value = p.Value
+	return iter
 }
 
-func New[T any](source map[string]T) *Dictionary[T] {
-	var d Dictionary[T]
-	for key, val := range source {
-		d.Store(key, val)
+func (d *Dictionary[T]) Back() *Iterator[T] {
+	if d.maps == nil || len(d.maps) <= 0 {
+		return nil
 	}
-	return &d
+	index := len(d.order) - 1
+	p := d.maps[d.order[index]]
+	return &Iterator[T]{
+		dic:   d,
+		index: index,
+		Key:   p.Key,
+		Value: p.Value,
+	}
+}
+
+func (iter *Iterator[T]) Prev() *Iterator[T] {
+	iter.index--
+	if iter.index < 0 {
+		return nil
+	}
+	dic := iter.dic
+	p := dic.maps[dic.order[iter.index]]
+	iter.Key = p.Key
+	iter.Value = p.Value
+	return iter
 }
