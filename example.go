@@ -21,7 +21,7 @@ func main() {
 	dic.Delete("D")
 	println("------")
 
-	for p := dic.Each(); p.Range(); {
+	for p := dic.Front(); p != nil; p = p.Next() {
 		println("dic[`"+p.Key+"`]=", p.Value)
 	}
 }
