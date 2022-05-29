@@ -1,13 +1,11 @@
-package ignoreCaseSorted_test
+package ignoreCaseSorted
 
 import (
 	"testing"
-
-	"github.com/hymkor/go-ignorecase-sorted"
 )
 
-func make_testdata() *ignoreCaseSorted.Dictionary[int] {
-	var dic ignoreCaseSorted.Dictionary[int]
+func make_testdata() *Dictionary[int] {
+	var dic Dictionary[int]
 
 	dic.Set("x", 7)
 	dic.Set("y", 8)
