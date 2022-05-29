@@ -4,11 +4,11 @@ import (
 	"testing"
 )
 
-func TestAscend2(t *testing.T) {
+func TestAscend(t *testing.T) {
 	dic := make_testdata()
 	expect := make_expect_ascend()
 
-	for p := dic.Ascend(); p.Range(); {
+	for p := dic.Front(); p != nil; p = p.Next() {
 		if expect[0].key != p.Key {
 			t.Fatalf("'%s' != '%s'", expect[0].key, p.Key)
 			return
@@ -21,11 +21,11 @@ func TestAscend2(t *testing.T) {
 	}
 }
 
-func TestDesend2(t *testing.T) {
+func TestDesend(t *testing.T) {
 	dic := make_testdata()
 	expect := make_expect_descend()
 
-	for p := dic.Descend(); p.Range(); {
+	for p := dic.Back(); p != nil; p = p.Prev() {
 		if expect[0].key != p.Key {
 			t.Fatalf("'%s' != '%s'", expect[0].key, p.Key)
 			return
