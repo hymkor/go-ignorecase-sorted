@@ -1,5 +1,4 @@
 //go:build ignore
-// +build ignore
 
 package main
 
@@ -26,6 +25,11 @@ func main() {
 		println("dic[`"+key+"`]=", value)
 		return true
 	})
+
+	println("------ Go 1.22 rangefunc iterator -----")
+	for key, value := range dic.Range {
+		println("dic[`"+key+"`]=", value)
+	}
 
 	println("------ type1 iterator (ascending) -----")
 	for p := dic.Front(); p != nil; p = p.Next() {

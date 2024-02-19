@@ -32,6 +32,11 @@ func main() {
         return true
     })
 
+    println("------ Go 1.22 rangefunc iterator -----")
+    for key, value := range dic.Range {
+        println("dic[`"+key+"`]=", value)
+    }
+
     println("------ type1 iterator (ascending) -----")
     for p := dic.Front(); p != nil; p = p.Next() {
         println("dic[`"+p.Key+"`]=", p.Value)
@@ -60,6 +65,10 @@ func main() {
 ------ The case of keys are ignored ------
 dic[`A`]= 1 whose key is set as `a`
 ------ type0 iterator -----
+dic[`a`]= 1
+dic[`b`]= 2
+dic[`c`]= 3
+------ Go 1.22 rangefunc iterator -----
 dic[`a`]= 1
 dic[`b`]= 2
 dic[`c`]= 3
