@@ -43,7 +43,7 @@ func TestRange(t *testing.T) {
 	dic := make_testdata()
 	expect := make_expect_ascend()
 
-	dic.Range(func(key string, value int) bool {
+	dic.Each(func(key string, value int) bool {
 		if expect[0].key != key {
 			t.Fatalf("'%s' != '%s'", expect[0].key, key)
 			return false

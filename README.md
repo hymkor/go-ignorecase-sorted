@@ -21,35 +21,42 @@ func main() {
     dic.Set("c", 3)
     dic.Set("d", 3)
 
-    println("------ The case of keys are ignored ------")
+    println("------ test the case of keys are ignored ------")
     if val, ok := dic.Get("A"); ok {
         println("dic[`A`]=", val, "whose key is set as `a`")
     }
     dic.Delete("D")
+    println()
 
-    println("------ type0 iterator -----")
-    dic.Range(func(key string, value int) bool {
+    println("------ iterate with callback function -----")
+    dic.Each(func(key string, value int) bool {
         println("dic[`"+key+"`]=", value)
         return true
     })
+    println()
 
-    println("------ Go 1.22 rangefunc iterator -----")
-    for key, value := range dic.Range {
+    println("------ iterate with rangefunc of Go 1.22 -----")
+    for key, value := range dic.Each {
         println("dic[`"+key+"`]=", value)
     }
+    println()
 }
 ```
 
 **go run example.go**
+
 ```go run example.go|
------- The case of keys are ignored ------
+------ test the case of keys are ignored ------
 dic[`A`]= 1 whose key is set as `a`
------- type0 iterator -----
+
+------ iterate with callback function -----
 dic[`a`]= 1
 dic[`b`]= 2
 dic[`c`]= 3
------- Go 1.22 rangefunc iterator -----
+
+------ iterate with rangefunc of Go 1.22 -----
 dic[`a`]= 1
 dic[`b`]= 2
 dic[`c`]= 3
+
 ```

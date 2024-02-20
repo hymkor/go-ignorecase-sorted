@@ -71,7 +71,7 @@ func (d *Dictionary[T]) Get(key string) (val T, ok bool) {
 	return
 }
 
-func (d *Dictionary[T]) Range(f func(string, T) bool) {
+func (d *Dictionary[T]) Each(f func(string, T) bool) {
 	for _, lowerKey := range d.order {
 		p := d.maps[lowerKey]
 		if !f(p.Key, p.Value) {
