@@ -1,4 +1,4 @@
-package ignoreCaseSorted
+package ignoreCaseSorted_test
 
 import (
 	"testing"
