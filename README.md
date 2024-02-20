@@ -37,27 +37,6 @@ func main() {
     for key, value := range dic.Range {
         println("dic[`"+key+"`]=", value)
     }
-
-    println("------ type1 iterator (ascending) -----")
-    for p := dic.Front(); p != nil; p = p.Next() {
-        println("dic[`"+p.Key+"`]=", p.Value)
-    }
-
-    println("------ type1 iterator (descending) -----")
-    for p := dic.Back(); p != nil; p = p.Prev() {
-        println("dic[`"+p.Key+"`]=", p.Value)
-    }
-
-    println("------ type2 iterator (ascending) -----")
-    for p := dic.Ascend(); p.Range(); {
-        println("dic[`"+p.Key+"`]=", p.Value)
-    }
-
-    println("------ type2 iterator (descending) -----")
-    for p := dic.Descend(); p.Range(); {
-        println("dic[`"+p.Key+"`]=", p.Value)
-    }
-
 }
 ```
 
@@ -73,20 +52,4 @@ dic[`c`]= 3
 dic[`a`]= 1
 dic[`b`]= 2
 dic[`c`]= 3
------- type1 iterator (ascending) -----
-dic[`a`]= 1
-dic[`b`]= 2
-dic[`c`]= 3
------- type1 iterator (descending) -----
-dic[`c`]= 3
-dic[`b`]= 2
-dic[`a`]= 1
------- type2 iterator (ascending) -----
-dic[`a`]= 1
-dic[`b`]= 2
-dic[`c`]= 3
------- type2 iterator (descending) -----
-dic[`c`]= 3
-dic[`b`]= 2
-dic[`a`]= 1
 ```
