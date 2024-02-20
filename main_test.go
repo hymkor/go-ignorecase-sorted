@@ -1,7 +1,7 @@
 package ignoreCaseSorted_test
 
 import (
-	"github.com/hymkor/go-ignorecase-sorted"
+	"github.com/hymkor/go-ignorecase-sorted/v2"
 )
 
 import (
