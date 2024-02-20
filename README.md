@@ -4,7 +4,8 @@ go-ignorecase-sorted.Dictionary
 - Container library like map[string]T using Generics
 - Ignore cases of string-keys
 - Iterators can read elements by sorted-order
-- It can be used with GOEXPERIMENT=rangefunc of Go 1.22
+- It can be used with `GOEXPERIMENT=rangefunc` of Go 1.22
+- This package is the version 2 now. Therefore, please import `github.com/hymkor/go-ignorecase-sorted/v2`
 
 ```example.go
 package main
