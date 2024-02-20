@@ -44,9 +44,9 @@ func main() {
 }
 ```
 
-**go run example.go**
+**env GOEXPERIMENT=rangefunc go run example.go**
 
-```go run example.go|
+```env GOEXPERIMENT=rangefunc go run example.go|
 ------ test the case of keys are ignored ------
 dic[`A`]= 1 whose key is set as `a`
 

@@ -11,7 +11,4 @@ build:
 test:
 	go test -v
 
-readme:
-	$(SET) "GOEXPERIMENT=rangefunc" && example-into-readme
-
 .PHONY: build test readme
