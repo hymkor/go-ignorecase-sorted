@@ -5,6 +5,21 @@ import (
 	"strings"
 )
 
+// sliceInsert is equivant to "slice".Insert. This is for Go 1.18 to 1.20
+func sliceInsert[T any](array []T, at int, value T) []T {
+	var zero T
+	array = append(array, zero)
+	copy(array[at+1:], array[at:])
+	array[at] = value
+	return array
+}
+
+// sliceDelete is equivant to "slice".Delete. This is for Go 1.18 to 1.20
+func sliceDelete[T any](array []T, at int) []T {
+	copy(array[at:], array[at+1:])
+	return array[:len(array)-1]
+}
+
 type _Pair[T any] struct {
 	Key   string
 	Value T
@@ -31,9 +46,7 @@ func (d *Dictionary[T]) Set(key string, val T) {
 	}
 	if _, ok := d.maps[lowerKey]; !ok {
 		at := sort.Search(len(d.order), func(i int) bool { return d.order[i] >= lowerKey })
-		d.order = append(d.order, "")
-		copy(d.order[at+1:], d.order[at:])
-		d.order[at] = lowerKey
+		sliceInsert(d.order, at, lowerKey)
 	}
 	d.maps[lowerKey] = _Pair[T]{Key: key, Value: val}
 }
@@ -47,8 +60,7 @@ func (d *Dictionary[T]) Delete(key string) {
 	if d.order != nil && len(d.order) > 0 {
 		at := sort.Search(len(d.order), func(i int) bool { return d.order[i] >= lowerKey })
 		if at < len(d.order) && d.order[at] == lowerKey {
-			copy(d.order[at:], d.order[at+1:])
-			d.order = d.order[:len(d.order)-1]
+			sliceDelete(d.order, at)
 		}
 	}
 }
